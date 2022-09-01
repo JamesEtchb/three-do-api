@@ -30,10 +30,17 @@ export async function createTask(req, res) {
   getTasks(req, res) //send back the full list of tasks
 }
 
-export function updateTask(req, res) {
+export async function updateTask(req, res) {
   const taskUpdate = req.body
   const { taskId } = req.params
-  res.status(202).send('Task Updated')
+  const db = dbConnect()
+  await db
+    .collection('tasks')
+    .doc(taskId)
+    .update(taskUpdate)
+    .catch((err) => res.status(500).send(err))
+  res.status(202)
+  getTasks(req, res)
 }
 
 export function deleteTask(req, res) {
